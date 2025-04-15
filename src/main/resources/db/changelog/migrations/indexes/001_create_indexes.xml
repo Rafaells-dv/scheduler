@@ -1,0 +1,23 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="1" author="rafael.leonardo">
+        <sql dbms="postgresql">
+            -- Index para otimizar busca por data
+            CREATE INDEX idx_schedule_date_sched ON schedule(date_sched);
+
+            -- Index para status
+            CREATE INDEX idx_schedule_status ON schedule(status);
+
+            -- Index para relacionamento com cliente e serviço
+            CREATE INDEX idx_schedule_id_client ON schedule(id_client);
+            CREATE INDEX idx_schedule_id_service ON schedule(id_service);
+
+            -- Index para busca por nome ou email do cliente
+            CREATE INDEX idx_client_name ON client(name);
+            CREATE INDEX idx_client_email ON client(email);
+        </sql>
+    </changeSet>
+</databaseChangeLog>

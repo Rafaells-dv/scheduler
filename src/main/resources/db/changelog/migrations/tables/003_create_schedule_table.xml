@@ -1,0 +1,37 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="1" author="rafael.leonardo">
+        <sql dbms="postgresql">
+            CREATE TABLE schedule (
+                                      id SERIAL PRIMARY KEY,
+                                      date_sched TIMESTAMPTZ NOT NULL,
+                                      status VARCHAR(20) NOT NULL,
+                                      id_service INTEGER NOT NULL,
+                                      id_client INTEGER NOT NULL,
+                                      CONSTRAINT fk_service FOREIGN KEY (id_service) REFERENCES service(id),
+                                      CONSTRAINT fk_client FOREIGN KEY (id_client) REFERENCES client(id)
+            );
+        </sql>
+    </changeSet>
+    <changeSet id="2" author="rafael.leonardo">
+        <sql dbms="postgresql">
+            ALTER TABLE schedule
+                ADD CONSTRAINT schedule_unique
+                    UNIQUE (id_client, id_service, date_sched);
+        </sql>
+    </changeSet>
+    <changeSet id="3" author="rafael.leonardo">
+        <sql dbms="postgresql">
+            ALTER TABLE schedule
+            DROP CONSTRAINT IF EXISTS schedule_unique;
+
+            ALTER TABLE schedule
+                ADD CONSTRAINT schedule_unique_client_time
+                    UNIQUE (id_client, date_sched);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

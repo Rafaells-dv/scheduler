@@ -1,0 +1,30 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="1" author="rafael.leonardo">
+        <sql dbms="postgresql">
+            CREATE TABLE service (
+                                     id SERIAL PRIMARY KEY,
+                                     title VARCHAR(100) NOT NULL,
+                                     description VARCHAR(255),
+                                     price DECIMAL(10, 2) NOT NULL,
+                                     duration INTERVAL NOT NULL
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="2" author="rafael.leonardo">
+        <sql dbms="postgresql">
+            ALTER TABLE service
+                ADD COLUMN active BOOLEAN NOT NULL DEFAULT TRUE;
+        </sql>
+    </changeSet>
+    <changeSet id="3" author="rafael.leonardo">
+        <sql dbms="postgresql">
+            ALTER TABLE service ALTER COLUMN duration TYPE VARCHAR(20);
+
+        </sql>
+    </changeSet>
+</databaseChangeLog>
