@@ -7,12 +7,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class ScheduleDTO extends CreateScheduleDTO {
+public class ScheduleDTO {
     private Integer id;
+    private LocalDateTime dateSched;
     private ClientDTO client;
     private ServiceDTO service;
 }

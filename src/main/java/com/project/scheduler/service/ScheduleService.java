@@ -4,8 +4,7 @@ import com.project.scheduler.dto.schedule.CreateScheduleDTO;
 import com.project.scheduler.dto.schedule.ScheduleDTO;
 import com.project.scheduler.entity.Client;
 import com.project.scheduler.entity.Schedule;
-import com.project.scheduler.entity.ServiceEntity;
-import com.project.scheduler.enums.EnSchedStatus;
+import com.project.scheduler.entity.ServiceOffer;
 import com.project.scheduler.mapper.ScheduleMapper;
 import com.project.scheduler.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,20 +15,19 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final ClientService clientService;
-    private final ServiceService serviceService;
+    private final ServiceOfferService serviceOfferService;
     private final ScheduleMapper scheduleMapper;
 
     public ScheduleDTO create(CreateScheduleDTO createScheduleDTO, Integer idClient, Integer idService) {
 
         Client client = clientService.getByIdEntity(idClient);
-        ServiceEntity service = serviceService.getByIdEntity(idService);
+        ServiceOffer service = serviceOfferService.getByIdEntity(idService);
 
         boolean isPastDate = createScheduleDTO.getDateSched().isBefore(LocalDateTime.now());
         if(isPastDate) {
