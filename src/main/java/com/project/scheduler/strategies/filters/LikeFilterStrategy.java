@@ -1,0 +1,34 @@
+package com.project.scheduler.strategies.filters;
+
+import com.project.scheduler.dto.filters.PageFilterDTO;
+import com.project.scheduler.strategies.interfaces.FilterStrategy;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import org.springframework.data.jpa.domain.Specification;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+public class LikeFilterStrategy<T> implements FilterStrategy<T> {
+
+    @Override
+    public Specification<T> buildSpecification(PageFilterDTO filter) {
+        return (Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            for (Map.Entry<String, Object> entry : filter.getFilters().entrySet()) {
+                String field = entry.getKey();
+                Object value = entry.getValue();
+
+                if(value instanceof String && value != null) {
+                    predicates.add(cb.like(cb.lower(root.get(field)), "%" + value.toString().toLowerCase() + "%"));
+                }
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+    }
+}
