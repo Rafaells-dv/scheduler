@@ -2,6 +2,7 @@ package com.project.scheduler.dto.schedule;
 
 import com.project.scheduler.dto.client.ClientDTO;
 import com.project.scheduler.dto.service.ServiceDTO;
+import com.project.scheduler.enums.EnSchedStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,4 +19,5 @@ public class ScheduleDTO {
     private LocalDateTime dateSched;
     private ClientDTO client;
     private ServiceDTO service;
+    private EnSchedStatus status;
 }
