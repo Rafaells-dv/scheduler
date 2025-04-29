@@ -7,6 +7,7 @@ import com.project.scheduler.entity.Client;
 import com.project.scheduler.entity.Schedule;
 import com.project.scheduler.entity.ServiceOffer;
 import com.project.scheduler.enums.EnOrderDirection;
+import com.project.scheduler.exception.BusinessRuleException;
 import com.project.scheduler.mapper.ScheduleMapper;
 import com.project.scheduler.repository.ScheduleRepository;
 import com.project.scheduler.utils.filter.FilterBuilder;
@@ -41,17 +42,17 @@ public class ScheduleService {
 
         boolean isPastDate = createScheduleDTO.getDateSched().isBefore(LocalDateTime.now());
         if(isPastDate) {
-            throw new RuntimeException("Impossible to schedule a past date.");
+            throw new BusinessRuleException("Impossible to schedule a past date.");
         }
 
         boolean isDateUnavailable = isDateScheduled(createScheduleDTO.getDateSched(), service.getDuration());
         if(isDateUnavailable) {
-            throw new RuntimeException("Date unavailable.");
+            throw new BusinessRuleException("Date unavailable.");
         };
 
         boolean isServiceUnavailable = !service.getActive();
         if(isServiceUnavailable) {
-            throw new RuntimeException("Service is not available.");
+            throw new BusinessRuleException("Service is not available.");
         }
 
         Schedule schedule = Schedule.create(createScheduleDTO.getDateSched(), client, service);
@@ -86,8 +87,6 @@ public class ScheduleService {
                 schedulesPageResult.isLast()
         );
     }
-
-
 
     private boolean isDateScheduled(LocalDateTime date, Duration duration) {
         List<Schedule> schedules = getSchedulesByDay(LocalDate.from(date));

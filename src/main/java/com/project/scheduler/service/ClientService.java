@@ -4,6 +4,7 @@ import com.project.scheduler.dto.client.ClientDTO;
 import com.project.scheduler.dto.client.CreateClientDTO;
 import com.project.scheduler.dto.client.UpdateClientDTO;
 import com.project.scheduler.entity.Client;
+import com.project.scheduler.exception.NotFoundException;
 import com.project.scheduler.mapper.ClientMapper;
 import com.project.scheduler.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +48,7 @@ public class ClientService {
     private Client findById(Integer id) {
         Optional<Client> client = clientRepository.findById(id);
         if(client.isEmpty()) {
-            throw new RuntimeException("Client not found");
+            throw new NotFoundException("Client not found");
         }
 
         return client.get();

@@ -4,6 +4,7 @@ import com.project.scheduler.dto.service.CreateServiceDTO;
 import com.project.scheduler.dto.service.ServiceDTO;
 import com.project.scheduler.dto.service.UpdateServiceDTO;
 import com.project.scheduler.entity.ServiceOffer;
+import com.project.scheduler.exception.NotFoundException;
 import com.project.scheduler.mapper.ServiceMapper;
 import com.project.scheduler.repository.ServiceRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +47,7 @@ public class ServiceOfferService {
     private ServiceOffer findById(Integer id) {
         Optional<ServiceOffer> service = serviceRepository.findById(id);
         if (service.isEmpty()) {
-            throw new RuntimeException("Service not found");
+            throw new NotFoundException("Service not found");
         }
         return service.get();
     }
