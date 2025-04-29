@@ -1,6 +1,5 @@
-package com.project.scheduler.composites;
+package com.project.scheduler.utils.filter;
 
-import com.project.scheduler.strategies.interfaces.FilterStrategy;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -8,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class CompositeFilterStrategy<T> implements FilterStrategy<T> {
+public class CompositeFilterStrategy<T> extends FilterStrategy<T> {
 
     private final List<FilterStrategy<T>> strategies;
 

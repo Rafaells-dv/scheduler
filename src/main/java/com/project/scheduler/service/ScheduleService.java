@@ -9,7 +9,7 @@ import com.project.scheduler.entity.ServiceOffer;
 import com.project.scheduler.enums.EnOrderDirection;
 import com.project.scheduler.mapper.ScheduleMapper;
 import com.project.scheduler.repository.ScheduleRepository;
-import com.project.scheduler.utils.FilterBuilder;
+import com.project.scheduler.utils.filter.FilterBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
