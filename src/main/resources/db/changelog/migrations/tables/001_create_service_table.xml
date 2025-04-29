@@ -5,7 +5,7 @@
 
     <changeSet id="1" author="rafael.leonardo">
         <sql dbms="postgresql">
-            CREATE TABLE service (
+            CREATE TABLE service_offer (
                                      id SERIAL PRIMARY KEY,
                                      title VARCHAR(100) NOT NULL,
                                      description VARCHAR(255),
@@ -17,13 +17,13 @@
 
     <changeSet id="2" author="rafael.leonardo">
         <sql dbms="postgresql">
-            ALTER TABLE service
+            ALTER TABLE service_offer
                 ADD COLUMN active BOOLEAN NOT NULL DEFAULT TRUE;
         </sql>
     </changeSet>
     <changeSet id="3" author="rafael.leonardo">
         <sql dbms="postgresql">
-            ALTER TABLE service ALTER COLUMN duration TYPE VARCHAR(20);
+            ALTER TABLE service_offer ALTER COLUMN duration TYPE VARCHAR(20);
 
         </sql>
     </changeSet>

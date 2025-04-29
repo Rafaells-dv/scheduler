@@ -3,15 +3,13 @@ package com.project.scheduler.entity;
 import com.project.scheduler.config.DurationToStringConverter;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.Duration;
 
-@Entity(name = "service")
-@Table(name = "service")
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Entity
+@Table(name = "service_offer")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class ServiceEntity {
+public class ServiceOffer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -25,8 +23,16 @@ public class ServiceEntity {
     private Duration duration;
     private Boolean active;
 
-    public static ServiceEntity create(String title, String description, Double price, Duration duration) {
-        return new ServiceEntity(null, title, description, price, duration, Boolean.TRUE);
+    private ServiceOffer(String title, String description, Double price, Duration duration, Boolean active) {
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
+        this.active = active;
+    }
+
+    public static ServiceOffer create(String title, String description, Double price, Duration duration) {
+        return new ServiceOffer(title, description, price, duration, Boolean.TRUE);
     }
 
     public void update(String title, String description, Double price, Duration duration) {

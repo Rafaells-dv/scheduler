@@ -9,6 +9,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ClientDTO extends CreateClientDTO {
+public class ClientDTO {
     private Integer id;
+    private String name;
+    private String email;
+    private String phone;
 }

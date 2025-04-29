@@ -5,7 +5,6 @@ import lombok.*;
 
 @Entity
 @Table
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Client {
@@ -19,8 +18,15 @@ public class Client {
     private String phone;
     private Boolean active;
 
+    private Client(String name, String email, String phone, Boolean active) {
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+        this.active = active;
+    }
+
     public static Client create(String name, String email, String phone) {
-        return new Client(null, name, email, phone, Boolean.TRUE);
+        return new Client(name, email, phone, Boolean.TRUE);
     }
 
     public void update(String name, String email, String phone) {

@@ -11,7 +11,7 @@
                                       status VARCHAR(20) NOT NULL,
                                       id_service INTEGER NOT NULL,
                                       id_client INTEGER NOT NULL,
-                                      CONSTRAINT fk_service FOREIGN KEY (id_service) REFERENCES service(id),
+                                      CONSTRAINT fk_service FOREIGN KEY (id_service) REFERENCES service_offer(id),
                                       CONSTRAINT fk_client FOREIGN KEY (id_client) REFERENCES client(id)
             );
         </sql>

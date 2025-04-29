@@ -3,12 +3,18 @@ package com.project.scheduler.dto.service;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Service;
+import lombok.Setter;
+
+import java.time.Duration;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Service
-public class ServiceDTO extends CreateServiceDTO{
+@Setter
+public class ServiceDTO{
     private Integer id;
+    private String title;
+    private String description;
+    private Double price;
+    private Duration duration;
 }
