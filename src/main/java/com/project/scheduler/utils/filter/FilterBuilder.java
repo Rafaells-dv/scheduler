@@ -1,10 +1,8 @@
-package com.project.scheduler.utils;
+package com.project.scheduler.utils.filter;
 
-import com.project.scheduler.composites.CompositeFilterStrategy;
-import com.project.scheduler.strategies.filters.DefaultFilterStrategy;
-import com.project.scheduler.strategies.filters.LikeFilterStrategy;
-import com.project.scheduler.strategies.filters.RangeFilterStrategy;
-import com.project.scheduler.strategies.interfaces.FilterStrategy;
+import com.project.scheduler.utils.filter.filters.DefaultFilterStrategy;
+import com.project.scheduler.utils.filter.filters.LikeFilterStrategy;
+import com.project.scheduler.utils.filter.filters.RangeFilterStrategy;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
@@ -28,16 +26,19 @@ public class FilterBuilder<T> {
 
         filter = convertTypes(filter);
 
-        if(hasRangeFilter(filter)) {
-            strategies.add(new RangeFilterStrategy());
+        // Adiciona o filtro de intervalo (min/max)
+        if (hasRangeFilter(filter)) {
+            strategies.add(new RangeFilterStrategy<>());
         }
 
-        if(hasLikeFilter(filter)) {
-            strategies.add(new LikeFilterStrategy());
+        // Adiciona filtro LIKE
+        if (hasLikeFilter(filter)) {
+            strategies.add(new LikeFilterStrategy<>());
         }
 
-        if(hasExactFilter(filter)) {
-            strategies.add(new DefaultFilterStrategy());
+        // Adiciona filtro exato (para outros tipos de filtros)
+        if (hasExactFilter(filter)) {
+            strategies.add(new DefaultFilterStrategy<>());
         }
 
         return new CompositeFilterStrategy<>(strategies).buildSpecification(this.filter);
@@ -56,6 +57,7 @@ public class FilterBuilder<T> {
                 Object newValue = strValue;
 
                 try {
+                    // Conversão de strings para LocalDateTime ou LocalDate
                     if (key.toLowerCase().contains("date")) {
                         if (strValue.contains("T")) {
                             newValue = LocalDateTime.parse(strValue, dateTimeFormatter);
@@ -81,21 +83,26 @@ public class FilterBuilder<T> {
     }
 
     private boolean hasRangeFilter(Map<String, Object> filter) {
-        return filter.keySet().stream().anyMatch(key -> key.endsWith("Min") || key.endsWith("Max"));
+        // Detecta filtros com sufixos "-min" ou "-max"
+        return filter.keySet().stream().anyMatch(key -> key.endsWith("-min") || key.endsWith("-max"));
     }
 
     private boolean hasLikeFilter(Map<String, Object> filter) {
+        // Detecta filtros que são strings (como buscas com LIKE)
         return filter.values().stream().anyMatch(value -> value instanceof String);
     }
 
     private boolean hasExactFilter(Map<String, Object> filter) {
+        // Detecta filtros exatos, sem sufixos "-min" ou "-max"
         return filter.entrySet().stream()
                 .anyMatch(entry -> {
                     String key = entry.getKey();
                     Object value = entry.getValue();
                     return value != null && !(value instanceof String) &&
-                            !key.endsWith("Min") && !key.endsWith("Max");
+                            !key.endsWith("-min") && !key.endsWith("-max");
                 });
     }
 }
+
+
 

@@ -1,6 +1,6 @@
-package com.project.scheduler.strategies.filters;
+package com.project.scheduler.utils.filter.filters;
 
-import com.project.scheduler.strategies.interfaces.FilterStrategy;
+import com.project.scheduler.utils.filter.FilterStrategy;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class DefaultFilterStrategy<T> implements FilterStrategy<T> {
+public class DefaultFilterStrategy<T> extends FilterStrategy<T> {
 
     @Override
     public Specification<T> buildSpecification(Map<String, Object> filter) {
@@ -19,7 +19,16 @@ public class DefaultFilterStrategy<T> implements FilterStrategy<T> {
                 Object value = entry.getValue();
                 if (value == null) continue;
 
-                String normalizedField = entry.getKey().replace("-", ".");
+                String key = entry.getKey();
+                boolean isMin = key.endsWith("-min");
+                boolean isMax = key.endsWith("-max");
+
+                String baseKey = key;
+                if (isMin || isMax) {
+                    baseKey = key.substring(0, key.length() - 4);
+                }
+
+                String normalizedField = fieldNormalization(baseKey);
 
                 Path<?> path = root;
                 if (normalizedField.contains(".")) {
