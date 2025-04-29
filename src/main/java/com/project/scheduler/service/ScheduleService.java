@@ -3,6 +3,7 @@ package com.project.scheduler.service;
 import com.project.scheduler.dto.page.PageDTO;
 import com.project.scheduler.dto.schedule.CreateScheduleDTO;
 import com.project.scheduler.dto.schedule.ScheduleDTO;
+import com.project.scheduler.dto.schedule.UpdateStatusDTO;
 import com.project.scheduler.entity.Client;
 import com.project.scheduler.entity.Schedule;
 import com.project.scheduler.entity.ServiceOffer;
@@ -25,7 +26,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.project.scheduler.enums.EnSchedStatus.PENDING;
 
 @Service
 @RequiredArgsConstructor
@@ -88,6 +92,30 @@ public class ScheduleService {
         );
     }
 
+    public ScheduleDTO updateStatus(Integer idSchedule, UpdateStatusDTO newStatus) {
+        Schedule updateSchedule = findById(idSchedule);
+
+        switch (newStatus.getStatus()) {
+            case PENDING:
+                updateSchedule.markAsPending();
+                break;
+            case DONE:
+                updateSchedule.markAsDone();
+                break;
+            case CANCELLED:
+                updateSchedule.cancel();
+                break;
+            case CONFIRMED:
+                updateSchedule.confirm();
+                break;
+            default:
+                throw new BusinessRuleException("Impossible to update schedule.");
+        }
+
+        Schedule updatedSchedule = scheduleRepository.save(updateSchedule);
+        return scheduleMapper.toDTO(updatedSchedule);
+    }
+
     private boolean isDateScheduled(LocalDateTime date, Duration duration) {
         List<Schedule> schedules = getSchedulesByDay(LocalDate.from(date));
 
@@ -108,5 +136,13 @@ public class ScheduleService {
         LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
 
         return scheduleRepository.findAllByDateSchedBetween(startOfDay, endOfDay);
+    }
+
+    private Schedule findById(Integer idSchedule) {
+        Optional<Schedule> schedule = scheduleRepository.findById(idSchedule);
+        if(schedule.isEmpty()) {
+            throw new BusinessRuleException("Schedule not found.");
+        }
+        return schedule.get();
     }
 }

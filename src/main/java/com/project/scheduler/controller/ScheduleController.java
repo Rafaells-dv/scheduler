@@ -3,7 +3,9 @@ package com.project.scheduler.controller;
 import com.project.scheduler.dto.page.PageDTO;
 import com.project.scheduler.dto.schedule.CreateScheduleDTO;
 import com.project.scheduler.dto.schedule.ScheduleDTO;
+import com.project.scheduler.dto.schedule.UpdateStatusDTO;
 import com.project.scheduler.enums.EnOrderDirection;
+import com.project.scheduler.enums.EnSchedStatus;
 import com.project.scheduler.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,12 +21,12 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @PostMapping
-    public ResponseEntity<?> createSchedule(
+    public ResponseEntity<ScheduleDTO> createSchedule(
             @RequestBody CreateScheduleDTO createScheduleDTO,
             @RequestParam(name = "idClient") Integer idClient,
             @RequestParam(name = "idService") Integer idService
     ) {
-        return new ResponseEntity<>(scheduleService.create(createScheduleDTO, idClient, idService), HttpStatus.OK);
+        return new ResponseEntity<>(scheduleService.create(createScheduleDTO, idClient, idService), HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -33,10 +35,17 @@ public class ScheduleController {
             @RequestParam(name = "size", defaultValue = "10") Integer size,
             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
             @RequestParam(name = "orderBy", defaultValue = "DESC") EnOrderDirection orderBy,
-            @RequestParam(required = false) Map<String, Object> filters) {
+            @RequestParam(required = false) Map<String, Object> filters
+    ) {
 
         return new ResponseEntity<>(scheduleService.getSchedules(page, size, sortBy, orderBy, filters), HttpStatus.OK);
     }
 
-
+    @PutMapping("/{idSchedule}/status")
+    public ResponseEntity<ScheduleDTO> updateScheduleStatus(
+            @PathVariable Integer idSchedule,
+            @RequestBody UpdateStatusDTO newStatus
+    ) {
+        return new ResponseEntity<>(scheduleService.updateStatus(idSchedule, newStatus), HttpStatus.OK);
+    }
 }
