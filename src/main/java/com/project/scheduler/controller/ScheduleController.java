@@ -1,18 +1,15 @@
 package com.project.scheduler.controller;
 
-import com.project.scheduler.dto.filters.PageFilterDTO;
 import com.project.scheduler.dto.page.PageDTO;
 import com.project.scheduler.dto.schedule.CreateScheduleDTO;
 import com.project.scheduler.dto.schedule.ScheduleDTO;
 import com.project.scheduler.enums.EnOrderDirection;
 import com.project.scheduler.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -38,10 +35,7 @@ public class ScheduleController {
             @RequestParam(name = "orderBy", defaultValue = "DESC") EnOrderDirection orderBy,
             @RequestParam(required = false) Map<String, Object> filters) {
 
-        PageFilterDTO filterDTO = new PageFilterDTO();
-        filterDTO.setFilters(filters);
-
-        return new ResponseEntity<>(scheduleService.getSchedules(page, size, sortBy, orderBy, filterDTO), HttpStatus.OK);
+        return new ResponseEntity<>(scheduleService.getSchedules(page, size, sortBy, orderBy, filters), HttpStatus.OK);
     }
 
 

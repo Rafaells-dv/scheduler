@@ -1,11 +1,7 @@
 package com.project.scheduler.strategies.filters;
 
-import com.project.scheduler.dto.filters.PageFilterDTO;
 import com.project.scheduler.strategies.interfaces.FilterStrategy;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
@@ -15,22 +11,45 @@ import java.util.Map;
 public class RangeFilterStrategy<T> implements FilterStrategy<T> {
 
     @Override
-    public Specification<T> buildSpecification(PageFilterDTO filter) {
+    public Specification<T> buildSpecification(Map<String, Object> filter) {
         return (Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            for (Map.Entry<String, Object> entry : filter.getFilters().entrySet()) {
-                String field = entry.getKey();
+            for (Map.Entry<String, Object> entry : filter.entrySet()) {
+                String rawField = entry.getKey();
                 Object value = entry.getValue();
 
-                if (value != null) {
-                    if (field.endsWith("Min")) {
-                        String fieldName = field.substring(0, field.length() - 3); // Remove "Min"
-                        predicates.add(cb.greaterThanOrEqualTo(root.get(fieldName), (Comparable) value));
-                    } else if (field.endsWith("Max")) {
-                        String fieldName = field.substring(0, field.length() - 3); // Remove "Max"
-                        predicates.add(cb.lessThanOrEqualTo(root.get(fieldName), (Comparable) value));
+                if (value == null) continue;
+
+                String normalizedField = rawField.replace("-", ".");
+                String fieldName = normalizedField;
+                boolean isMin = false;
+                boolean isMax = false;
+
+                if (normalizedField.endsWith("Min")) {
+                    fieldName = normalizedField.substring(0, normalizedField.length() - 3);
+                    isMin = true;
+                } else if (normalizedField.endsWith("Max")) {
+                    fieldName = normalizedField.substring(0, normalizedField.length() - 3);
+                    isMax = true;
+                }
+
+                Path<? extends Comparable> path;
+                if (fieldName.contains(".")) {
+                    String[] parts = fieldName.split("\\.");
+                    Path<?> nestedPath = root;
+                    for (String part : parts) {
+                        nestedPath = nestedPath.get(part);
                     }
+                    path = (Path<? extends Comparable>) nestedPath;
+                } else {
+                    path = root.get(fieldName);
+                }
+
+                if (isMin) {
+                    predicates.add(cb.greaterThanOrEqualTo(path, (Comparable) value));
+                } else if (isMax) {
+                    predicates.add(cb.lessThanOrEqualTo(path, (Comparable) value));
                 }
             }
 
@@ -38,3 +57,4 @@ public class RangeFilterStrategy<T> implements FilterStrategy<T> {
         };
     }
 }
+

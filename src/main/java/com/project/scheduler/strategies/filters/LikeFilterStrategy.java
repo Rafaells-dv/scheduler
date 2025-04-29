@@ -1,11 +1,7 @@
 package com.project.scheduler.strategies.filters;
 
-import com.project.scheduler.dto.filters.PageFilterDTO;
 import com.project.scheduler.strategies.interfaces.FilterStrategy;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
@@ -15,20 +11,28 @@ import java.util.Map;
 public class LikeFilterStrategy<T> implements FilterStrategy<T> {
 
     @Override
-    public Specification<T> buildSpecification(PageFilterDTO filter) {
+    public Specification<T> buildSpecification(Map<String, Object> filter) {
         return (Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            for (Map.Entry<String, Object> entry : filter.getFilters().entrySet()) {
-                String field = entry.getKey();
+            for (Map.Entry<String, Object> entry : filter.entrySet()) {
                 Object value = entry.getValue();
+                if (!(value instanceof String) || value == null) continue;
 
-                if(value instanceof String && value != null) {
-                    predicates.add(cb.like(cb.lower(root.get(field)), "%" + value.toString().toLowerCase() + "%"));
+                String normalizedField = entry.getKey().replace("-", ".");
+                Path<?> path = root;
+
+                for (String part : normalizedField.split("\\.")) {
+                    path = path.get(part);
                 }
+
+                predicates.add(cb.like(cb.lower(path.as(String.class)), "%" + value.toString().toLowerCase() + "%"));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }
 }
+
+
+

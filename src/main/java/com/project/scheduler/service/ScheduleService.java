@@ -1,6 +1,5 @@
 package com.project.scheduler.service;
 
-import com.project.scheduler.dto.filters.PageFilterDTO;
 import com.project.scheduler.dto.page.PageDTO;
 import com.project.scheduler.dto.schedule.CreateScheduleDTO;
 import com.project.scheduler.dto.schedule.ScheduleDTO;
@@ -10,7 +9,6 @@ import com.project.scheduler.entity.ServiceOffer;
 import com.project.scheduler.enums.EnOrderDirection;
 import com.project.scheduler.mapper.ScheduleMapper;
 import com.project.scheduler.repository.ScheduleRepository;
-import com.project.scheduler.strategies.interfaces.FilterStrategy;
 import com.project.scheduler.utils.FilterBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,8 +22,8 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,13 +60,7 @@ public class ScheduleService {
         return scheduleMapper.toDTO(createdSchedule);
     }
 
-    public PageDTO<ScheduleDTO> getSchedules(Integer page, Integer size, String sortBy, EnOrderDirection orderDirection, PageFilterDTO filter) {
-        boolean hasNoFilter = filter == null;
-        if (hasNoFilter) {
-            filter = new PageFilterDTO();
-            filter.setFilters(new HashMap<>());
-        }
-
+    public PageDTO<ScheduleDTO> getSchedules(Integer page, Integer size, String sortBy, EnOrderDirection orderDirection, Map<String, Object> filter) {
         FilterBuilder<Schedule> filterBuilder = new FilterBuilder<>(filter);
 
         Specification<Schedule> spec = filterBuilder.buildSpecification();
